@@ -1,0 +1,34 @@
+{
+  "title": "SRE On-Call Triage: API Error Rate Alert",
+  "description": "Practice first-response SRE triage using synthetic alerts, metrics snapshots, logs, and stakeholder-update prompts.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "foreground": "setup.sh"
+    },
+    "steps": [
+      {
+        "title": "Read the alert",
+        "text": "step1.md"
+      },
+      {
+        "title": "Inspect synthetic evidence",
+        "text": "step2.md"
+      },
+      {
+        "title": "Classify severity",
+        "text": "step3.md"
+      },
+      {
+        "title": "Draft the first update",
+        "text": "step4.md"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}
