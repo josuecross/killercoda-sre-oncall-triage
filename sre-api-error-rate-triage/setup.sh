@@ -2,8 +2,11 @@
 set -euo pipefail
 
 LAB_DIR="${LAB_DIR:-/root/taskflow-sre-triage}"
+TASKFLOW_PORT="${TASKFLOW_PORT:-18080}"
+APP_DIR="$LAB_DIR/app"
 
-mkdir -p "$LAB_DIR"
+mkdir -p "$APP_DIR"
+rm -f "$LAB_DIR/metrics_snapshot.txt" "$LAB_DIR/api_logs_excerpt.txt"
 
 cat > "$LAB_DIR/alert.txt" <<'EOF'
 TaskFlow Demo synthetic alert
@@ -12,54 +15,9 @@ Alert name: APIHigh5xxErrorRate
 Service: api-service
 Primary workflow: task-create
 Condition: API 5xx error rate above threshold for 12 minutes
-Observed error rate: 7.8%
-Alert threshold: 5.0% for 10 minutes
-Secondary signal: p95 latency mildly elevated
-Initial severity hint: SEV-3 / Medium unless broader impact evidence appears
+Severity hint: SEV-3 / Medium unless broader impact appears
 
 Clean-room note: This is fictional educational evidence, not a real alert.
-EOF
-
-cat > "$LAB_DIR/metrics_snapshot.txt" <<'EOF'
-TaskFlow Demo synthetic metrics snapshot
-Window: last 15 minutes
-
-api-service request summary:
-- Total request volume: steady to mildly elevated
-- Overall 5xx error rate: 7.8%
-- task-create 5xx error rate: 18.6%
-- task-list 5xx error rate: 0.7%
-- task-detail 5xx error rate: 0.9%
-- p95 latency overall: 480 ms
-- p95 latency for task-create: 920 ms
-- p95 latency for read-only task views: 260 ms
-
-Interpretation hints:
-- Error rate is the primary signal.
-- Latency is mildly elevated, especially for task-create, but it is not the main alert condition.
-- The service appears degraded, not fully unavailable.
-- Read-only task views mostly continue working.
-- Additional evidence is needed before naming a root cause.
-EOF
-
-cat > "$LAB_DIR/api_logs_excerpt.txt" <<'EOF'
-TaskFlow Demo synthetic api-service log excerpt
-
-[lab-time 10:04:12] service=api-service route=POST /tasks workflow=task-create status=201 latency_ms=344 result=success
-[lab-time 10:04:39] service=api-service route=GET /tasks workflow=task-list status=200 latency_ms=212 result=success
-[lab-time 10:05:18] service=api-service route=POST /tasks workflow=task-create status=500 latency_ms=887 result=server_error
-[lab-time 10:06:03] service=api-service route=POST /tasks workflow=task-create status=500 latency_ms=941 result=server_error
-[lab-time 10:06:44] service=api-service route=GET /tasks/summary workflow=task-summary status=200 latency_ms=248 result=success
-[lab-time 10:07:10] service=api-service route=POST /tasks workflow=task-create status=201 latency_ms=391 result=success
-[lab-time 10:08:27] service=api-service route=POST /tasks workflow=task-create status=500 latency_ms=978 result=server_error
-[lab-time 10:09:02] service=api-service route=GET /tasks workflow=task-list status=200 latency_ms=229 result=success
-[lab-time 10:10:33] service=api-service route=POST /tasks workflow=task-create status=500 latency_ms=1004 result=server_error
-[lab-time 10:11:21] service=api-service route=GET /tasks/12345 workflow=task-detail status=200 latency_ms=241 result=success
-
-Responder note:
-- These entries show a pattern, not a final cause.
-- Do not declare root cause from this excerpt alone.
-- Consider dependency degradation, misconfiguration, partial deployment issue, traffic spike, database timeout, or bad validation path.
 EOF
 
 cat > "$LAB_DIR/service_status.txt" <<'EOF'
@@ -68,14 +26,13 @@ TaskFlow Demo synthetic service status
 api-service: degraded
 task-create workflow: intermittent failures
 read-only task views: mostly healthy
-authentication: no known issue in this teaser
-task notifications: not evaluated in this teaser
-overall customer impact: some users may see intermittent task creation failures
+service availability: not fully down
+initial severity hypothesis: SEV-3 / Medium
 
-Current responder framing:
-- The service is not completely down.
-- The issue appears concentrated around task-create.
-- Initial severity hypothesis: SEV-3 / Medium unless broader impact evidence appears.
+Responder framing:
+- Some users may see intermittent failures when creating tasks.
+- Read-only task views mostly continue working.
+- Do not name a final root cause from this status summary alone.
 EOF
 
 cat > "$LAB_DIR/runbook_excerpt.md" <<'EOF'
@@ -83,13 +40,14 @@ cat > "$LAB_DIR/runbook_excerpt.md" <<'EOF'
 
 ## First Response Goals
 
-1. Confirm what alert fired.
-2. Identify the affected service and workflow.
-3. Separate primary signal from supporting signals.
-4. Estimate customer impact.
-5. Assign an initial severity.
-6. Draft a short stakeholder update.
-7. Pick the next investigation step.
+1. Confirm the alert details.
+2. Check whether the service is reachable.
+3. Reproduce task-create failures.
+4. Compare `GET /tasks` with `POST /tasks`.
+5. Inspect container logs for error patterns.
+6. Estimate the observed error rate.
+7. Draft a short stakeholder update.
+8. Avoid naming root cause too early.
 
 ## Severity Guide
 
@@ -98,24 +56,13 @@ cat > "$LAB_DIR/runbook_excerpt.md" <<'EOF'
 - SEV-3 / Medium: Degraded service or intermittent failure affecting a subset of users.
 - SEV-4 / Low: Minor issue, low impact, workaround available, or investigation-only event.
 
-## Initial Hypothesis For This Teaser
+## Escalation Prompts
 
-Start at SEV-3 / Medium if the evidence remains limited to intermittent task-create failures and read-only task views mostly continue working.
+Escalate if evidence shows most requests are failing, the impact spreads beyond task-create, read-only views become unavailable, or there is a data integrity concern.
 
-Escalate if evidence shows the issue affects most requests, critical workflows are fully unavailable, the impact is spreading, or there is a data integrity concern.
+## Investigation Caution
 
-## Possible Issue Categories
-
-Use these as investigation categories only:
-
-- Dependency degradation
-- Misconfiguration
-- Partial deployment issue
-- Traffic spike
-- Database timeout
-- Bad validation path
-
-Do not choose a final root cause without more evidence.
+Use logs and metrics as evidence, not proof of final root cause. This teaser is about first-response triage, not solving the full incident.
 EOF
 
 cat > "$LAB_DIR/incident_notes.md" <<'EOF'
@@ -131,7 +78,7 @@ Who or what appears affected?
 
 ## Current Evidence
 
-What alert, metrics, logs, or service-status details support your current view?
+What alert, curl, metrics, logs, or service-status details support your current view?
 
 ## Initial Severity
 
@@ -150,6 +97,133 @@ When should stakeholders expect the next update?
 
 What should not be assumed yet?
 EOF
+
+cat > "$APP_DIR/taskflow_api.py" <<'EOF'
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
+import time
+
+HOST = "0.0.0.0"
+PORT = 8080
+
+state = {
+    "total_requests": 0,
+    "task_create_requests": 0,
+    "task_create_errors": 0,
+}
+
+
+def lab_time():
+    minute = 5 + (state["total_requests"] // 60)
+    second = state["total_requests"] % 60
+    return f"10:{minute:02d}:{second:02d}"
+
+
+def emit_log(method, path, workflow, status, latency_ms, result):
+    print(
+        " ".join(
+            [
+                f"lab_time={lab_time()}",
+                "service=api-service",
+                f"method={method}",
+                f"path={path}",
+                f"workflow={workflow}",
+                f"status={status}",
+                f"latency_ms={latency_ms}",
+                f"result={result}",
+            ]
+        ),
+        flush=True,
+    )
+
+
+class TaskFlowHandler(BaseHTTPRequestHandler):
+    def log_message(self, format, *args):
+        return
+
+    def write_text(self, status, body):
+        self.send_response(status)
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(body.encode("utf-8"))
+
+    def do_GET(self):
+        state["total_requests"] += 1
+
+        if self.path == "/healthz":
+            emit_log("GET", "/healthz", "health-check", 200, 35, "success")
+            self.write_text(200, "ok\n")
+            return
+
+        if self.path == "/tasks":
+            emit_log("GET", "/tasks", "task-list", 200, 210, "success")
+            self.write_text(200, "synthetic task list\n")
+            return
+
+        if self.path == "/metrics":
+            task_requests = state["task_create_requests"]
+            task_errors = state["task_create_errors"]
+            error_rate = (task_errors / task_requests * 100) if task_requests else 0.0
+            body = "\n".join(
+                [
+                    "TaskFlow Demo synthetic metrics",
+                    f"total_requests: {state['total_requests']}",
+                    f"task_create_requests: {task_requests}",
+                    f"task_create_errors: {task_errors}",
+                    f"approx_task_create_error_rate_percent: {error_rate:.2f}",
+                    "",
+                ]
+            )
+            emit_log("GET", "/metrics", "metrics", 200, 52, "success")
+            self.write_text(200, body)
+            return
+
+        emit_log("GET", self.path, "unknown", 404, 25, "not_found")
+        self.write_text(404, "synthetic route not found\n")
+
+    def do_POST(self):
+        state["total_requests"] += 1
+
+        if self.path != "/tasks":
+            emit_log("POST", self.path, "unknown", 404, 28, "not_found")
+            self.write_text(404, "synthetic route not found\n")
+            return
+
+        state["task_create_requests"] += 1
+        should_fail = state["task_create_requests"] % 3 == 0
+
+        if should_fail:
+            state["task_create_errors"] += 1
+            emit_log("POST", "/tasks", "task-create", 500, 912, "server_error")
+            self.write_text(500, "synthetic task-create failure\n")
+            return
+
+        emit_log("POST", "/tasks", "task-create", 201, 384, "success")
+        self.write_text(201, "synthetic task created\n")
+
+
+if __name__ == "__main__":
+    print(
+        f"Synthetic TaskFlow Demo api-service listening on {HOST}:{PORT}",
+        flush=True,
+    )
+    HTTPServer((HOST, PORT), TaskFlowHandler).serve_forever()
+EOF
+
+docker rm -f taskflow-api >/dev/null 2>&1 || true
+docker run -d \
+  --name taskflow-api \
+  -p "${TASKFLOW_PORT}:8080" \
+  -v "$APP_DIR:/app:ro" \
+  python:3.12-alpine \
+  python /app/taskflow_api.py >/dev/null
+
+for i in $(seq 1 20); do
+  if curl -fsS "http://localhost:${TASKFLOW_PORT}/healthz" >/dev/null 2>&1; then
+    break
+  fi
+  sleep 1
+done
 
 HELPER_BIN_DIR="${HELPER_BIN_DIR:-/usr/local/bin}"
 
@@ -171,89 +245,7 @@ if [ -z "$HELPER_BIN_DIR" ]; then
   mkdir -p "$HELPER_BIN_DIR"
 fi
 
-cat > "$HELPER_BIN_DIR/taskflowctl" <<'EOF'
-#!/usr/bin/env bash
-set -euo pipefail
-
-LAB_DIR="${LAB_DIR:-/root/taskflow-sre-triage}"
-
-show_file() {
-  local file="$1"
-  local path="$LAB_DIR/$file"
-
-  if [ ! -f "$path" ]; then
-    echo "Missing synthetic evidence file: $path"
-    echo "If this is Killercoda, wait a few seconds for setup to finish, then retry."
-    exit 1
-  fi
-
-  cat "$path"
-}
-
-case "${1:-help}" in
-  help)
-    cat <<'HELP'
-taskflowctl: synthetic TaskFlow Demo triage helper
-
-Commands:
-  taskflowctl help      Show this help text
-  taskflowctl alert     Show the synthetic alert
-  taskflowctl status    Show synthetic service status
-  taskflowctl metrics   Show synthetic metrics snapshot
-  taskflowctl logs      Show synthetic API log excerpt
-  taskflowctl runbook   Show synthetic runbook excerpt
-  taskflowctl notes     Show incident notes path and editing suggestion
-  taskflowctl hints     Show non-spoiler triage hints
-
-This helper is fictional and reads local synthetic evidence only.
-HELP
-    ;;
-  alert)
-    show_file "alert.txt"
-    ;;
-  status)
-    show_file "service_status.txt"
-    ;;
-  metrics)
-    show_file "metrics_snapshot.txt"
-    ;;
-  logs)
-    show_file "api_logs_excerpt.txt"
-    ;;
-  runbook)
-    show_file "runbook_excerpt.md"
-    ;;
-  notes)
-    cat <<NOTES
-Incident notes file:
-  $LAB_DIR/incident_notes.md
-
-Suggested edit command:
-  nano $LAB_DIR/incident_notes.md
-
-After writing your notes, run:
-  check-triage
-NOTES
-    ;;
-  hints)
-    cat <<'HINTS'
-Non-spoiler triage hints:
-- Identify the primary signal.
-- Avoid naming root cause too early.
-- Compare task-create vs read-only task views.
-- Classify severity from current impact.
-- Draft the update with status, impact, evidence, next action, and next update time.
-HINTS
-    ;;
-  *)
-    echo "Unknown taskflowctl command: $1"
-    echo "Run: taskflowctl help"
-    exit 1
-    ;;
-esac
-EOF
-
-chmod +x "$HELPER_BIN_DIR/taskflowctl"
+rm -f "$HELPER_BIN_DIR/taskflowctl"
 
 cat > "$HELPER_BIN_DIR/check-triage" <<'EOF'
 #!/usr/bin/env bash
@@ -282,7 +274,7 @@ clean_section_text() {
     /^[[:space:]]*$/ { next }
     $0 == "Write one sentence describing the current state." { next }
     $0 == "Who or what appears affected?" { next }
-    $0 == "What alert, metrics, logs, or service-status details support your current view?" { next }
+    $0 == "What alert, curl, metrics, logs, or service-status details support your current view?" { next }
     $0 == "SEV level:" { next }
     $0 == "Reasoning:" { next }
     $0 == "What will you check next?" { next }
@@ -344,7 +336,7 @@ FEEDBACK
 fi
 
 if [ "$filled_count" -ge 6 ] && [ "$term_count" -ge 4 ]; then
-  echo "Good first-pass triage note. Compare your reasoning with the paid full labs if you want the deeper answer-key format."
+  echo "Good first-pass triage note. You captured the key shape of an SRE update."
 else
   echo "Keep going. A strong first-pass note is short, specific, and clear about what is still unknown."
 fi
@@ -352,5 +344,5 @@ EOF
 
 chmod +x "$HELPER_BIN_DIR/check-triage"
 
-echo "Synthetic TaskFlow Demo SRE triage evidence created in $LAB_DIR"
-echo "Synthetic helper commands installed in $HELPER_BIN_DIR"
+echo "Synthetic TaskFlow Demo API is running at http://localhost:${TASKFLOW_PORT}"
+echo "Evidence workspace: $LAB_DIR"

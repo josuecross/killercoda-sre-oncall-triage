@@ -1,28 +1,31 @@
-# Step 2: Inspect Synthetic Evidence
+# Step 2: Reproduce the degraded workflow
 
-Now inspect the supporting evidence. Treat the files as clues, not proof.
+Now compare a read-only workflow with the task-create workflow.
 
 Run:
 
 ```bash
-taskflowctl metrics
-taskflowctl logs
+curl -i http://localhost:18080/tasks
+curl -i -X POST http://localhost:18080/tasks
 ```
 
-Optional:
+Then generate a small sample of task-create requests:
 
 ```bash
-taskflowctl hints
+for i in {1..12}; do curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:18080/tasks; done
+```
+
+Check the synthetic metrics endpoint:
+
+```bash
+curl -s http://localhost:18080/metrics
 ```
 
 Look for:
 
-- The primary signal.
-- Supporting signals.
-- Whether the issue appears total or partial.
-- Which request path appears most affected.
-- What evidence is still missing.
-
-In this scenario, error rate is the primary signal. Latency is mildly elevated, but it is a supporting signal. Logs can show patterns, but a short log excerpt is not enough to declare root cause.
+- Whether read-only `GET /tasks` behaves differently from `POST /tasks`.
+- Whether task-create is degraded.
+- Whether the service is fully down or partially degraded.
+- Whether error rate is the primary signal.
 
 Avoid saying "the cause is..." too early. A stronger first-pass statement is: "The evidence currently suggests..."

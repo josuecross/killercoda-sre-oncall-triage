@@ -1,20 +1,21 @@
 # Finish
 
-You completed a first-pass SRE/on-call triage exercise.
+You completed a first-pass SRE/on-call triage exercise using a real synthetic containerized API.
 
 You practiced:
 
 - Reading an API error-rate alert.
-- Inspecting synthetic metrics and log excerpts.
-- Using a synthetic terminal helper for triage evidence.
+- Confirming service health with `curl`.
+- Comparing read-only and write workflows.
+- Inspecting `docker logs`.
+- Filtering evidence with `grep`.
+- Estimating log counts with `awk`.
+- Drafting triage notes with `nano`.
+- Checking note completeness with `check-triage`.
 - Separating symptom from root cause.
-- Classifying an initial severity.
-- Drafting a first stakeholder update.
-- Writing triage notes.
-- Checking note completeness.
 - Choosing a next investigation step.
 
-This was a public teaser, not the full paid product and not a complete simulator. The paid kits go deeper with full incident briefs, worksheets, answer keys, completed postmortems, portfolio guides, and optional local labs.
+This was a public teaser and not a complete simulator.
 
 Related links:
 
