@@ -2,11 +2,13 @@
 
 Your first job is to understand the alert without guessing the root cause.
 
+`taskflowctl` is a synthetic helper command for this lab. It reads the fictional TaskFlow Demo evidence created during setup.
+
 Run:
 
 ```bash
-cat /root/taskflow-sre-triage/alert.txt
-cat /root/taskflow-sre-triage/service_status.txt
+taskflowctl alert
+taskflowctl status
 ```
 
 Think through:

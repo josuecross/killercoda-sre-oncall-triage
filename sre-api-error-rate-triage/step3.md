@@ -5,7 +5,7 @@ Use the synthetic runbook excerpt to choose an initial severity.
 Run:
 
 ```bash
-cat /root/taskflow-sre-triage/runbook_excerpt.md
+taskflowctl runbook
 ```
 
 Ask:

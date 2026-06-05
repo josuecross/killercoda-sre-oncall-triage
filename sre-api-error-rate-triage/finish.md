@@ -6,9 +6,12 @@ You practiced:
 
 - Reading an API error-rate alert.
 - Inspecting synthetic metrics and log excerpts.
+- Using a synthetic terminal helper for triage evidence.
 - Separating symptom from root cause.
 - Classifying an initial severity.
 - Drafting a first stakeholder update.
+- Writing triage notes.
+- Checking note completeness.
 - Choosing a next investigation step.
 
 This was a public teaser, not the full paid product and not a complete simulator. The paid kits go deeper with full incident briefs, worksheets, answer keys, completed postmortems, portfolio guides, and optional local labs.

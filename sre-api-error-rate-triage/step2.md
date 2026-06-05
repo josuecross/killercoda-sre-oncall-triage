@@ -5,8 +5,14 @@ Now inspect the supporting evidence. Treat the files as clues, not proof.
 Run:
 
 ```bash
-cat /root/taskflow-sre-triage/metrics_snapshot.txt
-cat /root/taskflow-sre-triage/api_logs_excerpt.txt
+taskflowctl metrics
+taskflowctl logs
+```
+
+Optional:
+
+```bash
+taskflowctl hints
 ```
 
 Look for:

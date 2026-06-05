@@ -151,4 +151,206 @@ When should stakeholders expect the next update?
 What should not be assumed yet?
 EOF
 
+HELPER_BIN_DIR="${HELPER_BIN_DIR:-/usr/local/bin}"
+
+if ! mkdir -p "$HELPER_BIN_DIR" 2>/dev/null || [ ! -w "$HELPER_BIN_DIR" ]; then
+  HELPER_BIN_DIR=""
+  OLD_IFS="$IFS"
+  IFS=":"
+  for path_dir in $PATH; do
+    if [ -d "$path_dir" ] && [ -w "$path_dir" ]; then
+      HELPER_BIN_DIR="$path_dir"
+      break
+    fi
+  done
+  IFS="$OLD_IFS"
+fi
+
+if [ -z "$HELPER_BIN_DIR" ]; then
+  HELPER_BIN_DIR="$LAB_DIR/bin"
+  mkdir -p "$HELPER_BIN_DIR"
+fi
+
+cat > "$HELPER_BIN_DIR/taskflowctl" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_DIR="${LAB_DIR:-/root/taskflow-sre-triage}"
+
+show_file() {
+  local file="$1"
+  local path="$LAB_DIR/$file"
+
+  if [ ! -f "$path" ]; then
+    echo "Missing synthetic evidence file: $path"
+    echo "If this is Killercoda, wait a few seconds for setup to finish, then retry."
+    exit 1
+  fi
+
+  cat "$path"
+}
+
+case "${1:-help}" in
+  help)
+    cat <<'HELP'
+taskflowctl: synthetic TaskFlow Demo triage helper
+
+Commands:
+  taskflowctl help      Show this help text
+  taskflowctl alert     Show the synthetic alert
+  taskflowctl status    Show synthetic service status
+  taskflowctl metrics   Show synthetic metrics snapshot
+  taskflowctl logs      Show synthetic API log excerpt
+  taskflowctl runbook   Show synthetic runbook excerpt
+  taskflowctl notes     Show incident notes path and editing suggestion
+  taskflowctl hints     Show non-spoiler triage hints
+
+This helper is fictional and reads local synthetic evidence only.
+HELP
+    ;;
+  alert)
+    show_file "alert.txt"
+    ;;
+  status)
+    show_file "service_status.txt"
+    ;;
+  metrics)
+    show_file "metrics_snapshot.txt"
+    ;;
+  logs)
+    show_file "api_logs_excerpt.txt"
+    ;;
+  runbook)
+    show_file "runbook_excerpt.md"
+    ;;
+  notes)
+    cat <<NOTES
+Incident notes file:
+  $LAB_DIR/incident_notes.md
+
+Suggested edit command:
+  nano $LAB_DIR/incident_notes.md
+
+After writing your notes, run:
+  check-triage
+NOTES
+    ;;
+  hints)
+    cat <<'HINTS'
+Non-spoiler triage hints:
+- Identify the primary signal.
+- Avoid naming root cause too early.
+- Compare task-create vs read-only task views.
+- Classify severity from current impact.
+- Draft the update with status, impact, evidence, next action, and next update time.
+HINTS
+    ;;
+  *)
+    echo "Unknown taskflowctl command: $1"
+    echo "Run: taskflowctl help"
+    exit 1
+    ;;
+esac
+EOF
+
+chmod +x "$HELPER_BIN_DIR/taskflowctl"
+
+cat > "$HELPER_BIN_DIR/check-triage" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_DIR="${LAB_DIR:-/root/taskflow-sre-triage}"
+NOTES_FILE="$LAB_DIR/incident_notes.md"
+
+if [ ! -f "$NOTES_FILE" ]; then
+  echo "Missing incident notes file: $NOTES_FILE"
+  echo "If this is Killercoda, wait a few seconds for setup to finish, then retry."
+  exit 0
+fi
+
+section_text() {
+  local section="$1"
+  awk -v section="$section" '
+    $0 == "## " section { in_section=1; next }
+    in_section && /^## / { exit }
+    in_section { print }
+  ' "$NOTES_FILE"
+}
+
+clean_section_text() {
+  awk '
+    /^[[:space:]]*$/ { next }
+    $0 == "Write one sentence describing the current state." { next }
+    $0 == "Who or what appears affected?" { next }
+    $0 == "What alert, metrics, logs, or service-status details support your current view?" { next }
+    $0 == "SEV level:" { next }
+    $0 == "Reasoning:" { next }
+    $0 == "What will you check next?" { next }
+    $0 == "When should stakeholders expect the next update?" { next }
+    $0 == "What should not be assumed yet?" { next }
+    { print }
+  '
+}
+
+section_filled() {
+  local section="$1"
+  local cleaned
+  cleaned="$(section_text "$section" | clean_section_text)"
+  [ -n "$cleaned" ]
+}
+
+missing_sections=()
+filled_count=0
+
+for section in "Status" "Impact" "Current Evidence" "Initial Severity" "Next Action" "Next Update Time" "Unknowns"; do
+  if section_filled "$section"; then
+    filled_count=$((filled_count + 1))
+  else
+    missing_sections+=("$section")
+  fi
+done
+
+term_count=0
+grep -Eiq 'SEV-3|Medium' "$NOTES_FILE" && term_count=$((term_count + 1))
+grep -Eiq 'api-service' "$NOTES_FILE" && term_count=$((term_count + 1))
+grep -Eiq 'task-create' "$NOTES_FILE" && term_count=$((term_count + 1))
+grep -Eiq 'error rate' "$NOTES_FILE" && term_count=$((term_count + 1))
+grep -Eiq 'unknown|not assume' "$NOTES_FILE" && term_count=$((term_count + 1))
+
+echo "Synthetic triage note check"
+echo
+echo "Sections with learner content: $filled_count / 7"
+echo "Useful reasoning terms found: $term_count / 5"
+echo
+
+if [ "${#missing_sections[@]}" -gt 0 ]; then
+  echo "Consider adding content under:"
+  for section in "${missing_sections[@]}"; do
+    echo "- $section"
+  done
+  echo
+fi
+
+if [ "$term_count" -lt 3 ]; then
+  cat <<'FEEDBACK'
+Consider mentioning more of the evidence you used:
+- severity hypothesis, such as SEV-3 / Medium
+- affected service, api-service
+- affected workflow, task-create
+- primary signal, error rate
+- what remains unknown or should not be assumed
+
+FEEDBACK
+fi
+
+if [ "$filled_count" -ge 6 ] && [ "$term_count" -ge 4 ]; then
+  echo "Good first-pass triage note. Compare your reasoning with the paid full labs if you want the deeper answer-key format."
+else
+  echo "Keep going. A strong first-pass note is short, specific, and clear about what is still unknown."
+fi
+EOF
+
+chmod +x "$HELPER_BIN_DIR/check-triage"
+
 echo "Synthetic TaskFlow Demo SRE triage evidence created in $LAB_DIR"
+echo "Synthetic helper commands installed in $HELPER_BIN_DIR"
