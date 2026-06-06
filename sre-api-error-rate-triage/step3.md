@@ -1,8 +1,4 @@
-# Step 3: Inspect logs and estimate impact
-
 Use recent logs to confirm the pattern you saw from requests and metrics.
-
-Run:
 
 ```bash
 docker logs taskflow-api --tail 20
@@ -19,9 +15,9 @@ cat /root/taskflow-sre-triage/runbook_excerpt.md
 
 Decide:
 
-- What evidence supports `SEV-3 / Medium`?
-- What would make you escalate to a higher severity?
-- What evidence is still missing?
-- What root cause should you avoid assuming too early?
+* What evidence supports `SEV-3 / Medium`?
+* What would make you escalate?
+* What evidence is still missing?
+* What root cause should you avoid assuming too early?
 
 Logs support the incident pattern. They do not, by themselves, prove the final cause.

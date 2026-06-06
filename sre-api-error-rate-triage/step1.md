@@ -1,8 +1,4 @@
-# Step 1: Open the incident
-
-Start by reading the alert and confirming whether the service process is reachable.
-
-Run:
+Start by opening the incident and confirming whether the service process is reachable.
 
 ```bash
 cat /root/taskflow-sre-triage/alert.txt
@@ -11,14 +7,14 @@ docker ps --filter name=taskflow-api
 curl -sS http://localhost:18080/healthz
 ```
 
-If `/healthz` returns `ok`, the service process is reachable. That does not mean every workflow is healthy.
+If `/healthz` returns `ok`, the process is reachable. That does not mean every workflow is healthy.
 
-Before moving on, write down:
+Before moving on, identify:
 
-- What alert fired?
-- Which service is affected?
-- Which workflow appears affected?
-- Is the service completely unavailable, or partially degraded?
-- What is still unknown?
+* The alert that fired
+* The affected service
+* The affected workflow
+* Whether this looks like total outage or partial degradation
+* What is still unknown
 
-A good first triage pass starts with a clear problem statement, not a confident guess.
+A strong first triage pass starts with a clear problem statement, not a confident guess.

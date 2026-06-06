@@ -8,19 +8,19 @@
     },
     "steps": [
       {
-        "title": "Read the alert",
+        "title": "Open the incident",
         "text": "step1.md"
       },
       {
-        "title": "Inspect synthetic evidence",
+        "title": "Reproduce the degraded workflow",
         "text": "step2.md"
       },
       {
-        "title": "Classify severity",
+        "title": "Inspect logs and estimate impact",
         "text": "step3.md"
       },
       {
-        "title": "Draft the first update",
+        "title": "Write the first update",
         "text": "step4.md"
       }
     ],

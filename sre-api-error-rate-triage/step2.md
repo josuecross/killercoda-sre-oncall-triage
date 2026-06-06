@@ -1,8 +1,4 @@
-# Step 2: Reproduce the degraded workflow
-
 Now compare a read-only path with the write path that triggered the alert.
-
-Run:
 
 ```bash
 curl -sS http://localhost:18080/tasks
@@ -23,10 +19,10 @@ curl -sS http://localhost:18080/metrics
 
 What to notice:
 
-- `GET /tasks` represents a read path.
-- `POST /tasks` represents the `task-create` workflow.
-- Some `task-create` requests fail.
-- The service is degraded, not fully unavailable.
-- Error rate is the main signal.
+* `GET /tasks` represents a read path.
+* `POST /tasks` represents the `task-create` workflow.
+* Some `task-create` requests fail.
+* The service is degraded, not fully unavailable.
+* Error rate is the main signal.
 
-Do not name a final root cause yet. At this stage, your job is to describe the failure pattern.
+At this stage, describe the failure pattern. Do not name a final root cause yet.
