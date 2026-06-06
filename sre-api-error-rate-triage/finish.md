@@ -1,12 +1,13 @@
-# Finish
+# You completed the first triage pass
 
-You completed a first-pass SRE/on-call triage exercise using a real synthetic containerized API.
+You used a running training API and real terminal commands to investigate an API error-rate alert.
 
 You practiced:
 
-- Reading an API error-rate alert.
-- Confirming service health with `curl`.
-- Comparing read-only and write workflows.
+- Opening an incident from an alert.
+- Confirming service reachability with `curl`.
+- Comparing read and write workflows.
+- Reproducing intermittent `task-create` failures.
 - Inspecting `docker logs`.
 - Filtering evidence with `grep`.
 - Estimating log counts with `awk`.
@@ -15,9 +16,9 @@ You practiced:
 - Separating symptom from root cause.
 - Choosing a next investigation step.
 
-This was a public teaser and not a complete simulator.
+The next step is to compare this workflow with deeper written labs, answer keys, postmortems, and local lab packs.
 
-Related links:
+Related resources:
 
 - GitHub free sample: https://github.com/josuecross/sre-crashloopbackoff-incident-kit
 - Paid Gumroad kit: https://cruzer480.gumroad.com/l/sre-crashloopbackoff-kit

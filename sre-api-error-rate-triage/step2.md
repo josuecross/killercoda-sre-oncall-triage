@@ -1,31 +1,32 @@
 # Step 2: Reproduce the degraded workflow
 
-Now compare a read-only workflow with the task-create workflow.
+Now compare a read-only path with the write path that triggered the alert.
 
 Run:
 
 ```bash
-curl -i http://localhost:18080/tasks
-curl -i -X POST http://localhost:18080/tasks
+curl -sS http://localhost:18080/tasks
+curl -sS -X POST http://localhost:18080/tasks
 ```
 
-Then generate a small sample of task-create requests:
+Generate a small sample of `task-create` requests and summarize the status codes:
 
 ```bash
-for i in {1..12}; do curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:18080/tasks; done
+for i in {1..12}; do curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:18080/tasks; done | sort | uniq -c
 ```
 
-Check the synthetic metrics endpoint:
+Check the training API metrics:
 
 ```bash
-curl -s http://localhost:18080/metrics
+curl -sS http://localhost:18080/metrics
 ```
 
-Look for:
+What to notice:
 
-- Whether read-only `GET /tasks` behaves differently from `POST /tasks`.
-- Whether task-create is degraded.
-- Whether the service is fully down or partially degraded.
-- Whether error rate is the primary signal.
+- `GET /tasks` represents a read path.
+- `POST /tasks` represents the `task-create` workflow.
+- Some `task-create` requests fail.
+- The service is degraded, not fully unavailable.
+- Error rate is the main signal.
 
-Avoid saying "the cause is..." too early. A stronger first-pass statement is: "The evidence currently suggests..."
+Do not name a final root cause yet. At this stage, your job is to describe the failure pattern.

@@ -336,7 +336,7 @@ FEEDBACK
 fi
 
 if [ "$filled_count" -ge 6 ] && [ "$term_count" -ge 4 ]; then
-  echo "Good first-pass triage note. You captured the key shape of an SRE update."
+  echo "Good first-pass triage note. You captured the shape of a useful SRE update."
 else
   echo "Keep going. A strong first-pass note is short, specific, and clear about what is still unknown."
 fi
