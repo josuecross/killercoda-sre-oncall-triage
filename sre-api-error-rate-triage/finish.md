@@ -16,6 +16,8 @@ You practiced:
 
 For deeper practice, continue with the written incident kits, answer keys, postmortem exercises, and local lab packs.
 
+If you used the hints and command reveals, try the lab again without opening them until you need help.
+
 Related resources:
 
 * GitHub free sample: https://github.com/josuecross/sre-crashloopbackoff-incident-kit

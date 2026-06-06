@@ -1,28 +1,35 @@
-Now compare a read-only path with the write path that triggered the alert.
+Reproduce the workflow that triggered the alert and compare it with a read-only path.
 
-```bash
-curl -sS http://localhost:18080/tasks
+Before using the commands, answer:
+
+* Does the read path behave differently from the write path?
+* Which workflow appears most affected?
+* Is the service down or degraded?
+* What signal should you trust most right now?
+
+<details>
+<summary>Need a hint?</summary>
+
+Compare `GET /tasks` with `POST /tasks`. A partial failure often affects one workflow more than another.
+
+</details>
+
+<details>
+<summary>Need the commands?</summary>
+
+<pre><code>curl -sS http://localhost:18080/tasks
 curl -sS -X POST http://localhost:18080/tasks
-```
-
-Generate a small sample of `task-create` requests and summarize the status codes:
-
-```bash
 for i in {1..12}; do curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:18080/tasks; done | sort | uniq -c
-```
-
-Check the training API metrics:
-
-```bash
 curl -sS http://localhost:18080/metrics
-```
+</code></pre>
 
-What to notice:
+</details>
 
-* `GET /tasks` represents a read path.
-* `POST /tasks` represents the `task-create` workflow.
-* Some `task-create` requests fail.
-* The service is degraded, not fully unavailable.
-* Error rate is the main signal.
+<details>
+<summary>What should you notice?</summary>
 
-At this stage, describe the failure pattern. Do not name a final root cause yet.
+`GET /tasks` should succeed. `POST /tasks` should show intermittent failures. The metrics endpoint should show `task-create` errors. This supports degraded service, not total outage.
+
+</details>
+
+Before continuing, describe the failure pattern in plain language.

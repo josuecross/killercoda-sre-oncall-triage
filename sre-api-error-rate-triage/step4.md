@@ -1,18 +1,6 @@
-Now write the first incident update. Keep it short, specific, and evidence-based.
+Write the first stakeholder update. Keep it short, specific, and evidence-based.
 
-Open the notes template:
-
-```bash
-nano /root/taskflow-sre-triage/incident_notes.md
-```
-
-If you prefer to inspect the template before editing:
-
-```bash
-cat /root/taskflow-sre-triage/incident_notes.md
-```
-
-Fill in:
+Your update should include:
 
 * Status
 * Impact
@@ -22,10 +10,28 @@ Fill in:
 * Next update time
 * Unknowns
 
-After writing your notes, run:
+<details>
+<summary>Need a hint?</summary>
 
-```bash
+A strong first update is calm and specific. It should say what is known, what is unknown, what is being checked next, and when the next update will happen. It should not pretend to know the final cause.
+
+</details>
+
+<details>
+<summary>Need the commands?</summary>
+
+<pre><code>nano /root/taskflow-sre-triage/incident_notes.md
+cat /root/taskflow-sre-triage/incident_notes.md
 check-triage
-```
+</code></pre>
 
-Your first update should tell people what is known, what is still unknown, and what you are doing next. Do not claim a final root cause yet.
+</details>
+
+<details>
+<summary>What should you notice?</summary>
+
+`check-triage` should give constructive feedback about missing sections and useful reasoning terms. It should not provide the final answer.
+
+</details>
+
+Before finishing, run `check-triage` after writing your notes.
