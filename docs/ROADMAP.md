@@ -9,16 +9,22 @@ This roadmap keeps the public interactive scenarios focused while the paid compa
   - Link: https://killercoda.com/josuecross/scenario/sre-api-error-rate-triage
   - Focus: Alert triage, degraded API workflow, logs, severity, and first stakeholder update.
 
-## Next Recommended Scenario
+## Current Draft Scenario
 
-- **CrashLoopBackOff interactive scenario**
-  - Build from the existing clean-room CrashLoopBackOff written kit and local lab.
+- **Kubernetes CrashLoopBackOff Triage**
+  - Status: Draft
+  - Expected future link: https://killercoda.com/josuecross/scenario/kubernetes-crashloopbackoff-triage
+  - Built from the existing clean-room CrashLoopBackOff written kit and local lab.
   - Keep the public version focused on first-response investigation.
   - Reserve complete answer-key reasoning and portfolio guidance for the paid companion pack.
 
+## Next Recommended Scenario
+
+- **Queue backlog / worker saturation**
+  - Focus on worker health, queue depth, freshness, impact classification, and first mitigation decision.
+
 ## Later Scenario Candidates
 
-- Queue backlog / worker saturation
 - Noisy alert / false positive
 - Deployment rollback decision
 - Weak postmortem action items

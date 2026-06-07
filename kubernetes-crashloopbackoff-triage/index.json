@@ -1,0 +1,34 @@
+{
+  "title": "Kubernetes CrashLoopBackOff Triage",
+  "description": "Practice first-response Kubernetes incident triage for a CrashLoopBackOffing api-service using kubectl, logs, events, rollout checks, and a safe fix-forward.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
+    "steps": [
+      {
+        "title": "Open the incident",
+        "text": "step1.md"
+      },
+      {
+        "title": "Inspect pod events and logs",
+        "text": "step2.md"
+      },
+      {
+        "title": "Compare configuration expectations",
+        "text": "step3.md"
+      },
+      {
+        "title": "Apply the fix and verify recovery",
+        "text": "step4.md"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
