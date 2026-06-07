@@ -21,7 +21,8 @@ If you used the hints and command reveals, try the lab again without opening the
 Related resources:
 
 * GitHub free sample: https://github.com/josuecross/sre-crashloopbackoff-incident-kit
-* Paid Gumroad kit: https://cruzer480.gumroad.com/l/sre-crashloopbackoff-kit
+* Paid companion pack: https://cruzer480.gumroad.com/l/cwepcj
+* Optional single-lab CrashLoopBackOff kit: https://cruzer480.gumroad.com/l/sre-crashloopbackoff-kit
 
 What SRE scenario should come next?
 

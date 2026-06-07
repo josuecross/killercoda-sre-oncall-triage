@@ -30,7 +30,11 @@ In this scenario, learners act as the on-call responder for TaskFlow Demo, inspe
 
 The paid companion pack is sold separately on Gumroad. It includes deeper written labs, answer keys, completed postmortems, portfolio guidance, and local practice materials.
 
-Current paid link:
+Main paid companion pack:
+
+https://cruzer480.gumroad.com/l/cwepcj
+
+A lower-cost single CrashLoopBackOff kit is also available separately:
 
 https://cruzer480.gumroad.com/l/sre-crashloopbackoff-kit
 
