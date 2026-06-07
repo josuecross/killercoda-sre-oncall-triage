@@ -19,6 +19,13 @@ This roadmap keeps the public interactive scenarios focused while the paid compa
   - Link: https://killercoda.com/josuecross/scenario/queue-backlog-worker-saturation
   - Focus: Worker health, queue depth, oldest message age, backlog trend, mitigation, drain verification, and first stakeholder update.
 
+## Current Draft Scenario
+
+- **Deployment Mismatch / Rollback Decision Triage**
+  - Status: Draft
+  - Expected future link: https://killercoda.com/josuecross/scenario/deployment-mismatch-rollback
+  - Focus: Health versus workflow behavior, release/config comparison, rollback versus fix-forward, recovery verification, and first stakeholder update.
+
 ## Next Recommended Scenario
 
 - **Noisy alert / false positive**

@@ -1,0 +1,34 @@
+{
+  "title": "Deployment Mismatch / Rollback Decision Triage",
+  "description": "Practice first-response release incident triage by comparing health, version, release, config, logs, rollback/fix-forward options, and recovery evidence.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
+    "steps": [
+      {
+        "title": "Open the incident",
+        "text": "step1.md"
+      },
+      {
+        "title": "Compare release and runtime state",
+        "text": "step2.md"
+      },
+      {
+        "title": "Choose mitigation and verify recovery",
+        "text": "step3.md"
+      },
+      {
+        "title": "Write the first update",
+        "text": "step4.md"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}
