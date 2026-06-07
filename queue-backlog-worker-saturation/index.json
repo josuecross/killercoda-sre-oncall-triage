@@ -1,0 +1,34 @@
+{
+  "title": "Queue Backlog / Worker Saturation Triage",
+  "description": "Practice first-response SRE triage for a growing async queue backlog using curl, Docker logs, grep, awk, metrics, mitigation, and stakeholder-update notes.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
+    "steps": [
+      {
+        "title": "Open the incident",
+        "text": "step1.md"
+      },
+      {
+        "title": "Inspect queue metrics and logs",
+        "text": "step2.md"
+      },
+      {
+        "title": "Apply mitigation and verify drain",
+        "text": "step3.md"
+      },
+      {
+        "title": "Write the first update",
+        "text": "step4.md"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}

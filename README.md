@@ -10,6 +10,7 @@ The scenarios are clean-room training material. Learners use realistic incident-
 | --- | --- | --- | --- |
 | API Error Rate Alert | Live | Alert triage, `curl`, Docker logs, `grep`, `awk`, severity, first stakeholder update | https://killercoda.com/josuecross/scenario/sre-api-error-rate-triage |
 | Kubernetes CrashLoopBackOff Triage | Live | `kubectl` status checks, pod events, logs, configuration comparison, fix-forward, recovery verification | https://killercoda.com/josuecross/scenario/kubernetes-crashloopbackoff-triage |
+| Queue Backlog / Worker Saturation Triage | Draft | Queue metrics, worker logs, backlog trend, mitigation, drain verification, first stakeholder update | Expected after Killercoda sync: https://killercoda.com/josuecross/scenario/queue-backlog-worker-saturation |
 
 ## Current Live Scenarios
 
@@ -27,7 +28,6 @@ In this scenario, learners inspect a CrashLoopBackOffing Kubernetes `api-service
 
 ## Planned Scenarios
 
-- Queue backlog / worker saturation
 - Noisy alert / false positive
 - Deployment rollback decision
 - Weak postmortem action items
