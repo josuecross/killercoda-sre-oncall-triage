@@ -9,15 +9,21 @@ The scenarios are clean-room training material. Learners use realistic incident-
 | Scenario | Status | What learners practice | Link |
 | --- | --- | --- | --- |
 | API Error Rate Alert | Live | Alert triage, `curl`, Docker logs, `grep`, `awk`, severity, first stakeholder update | https://killercoda.com/josuecross/scenario/sre-api-error-rate-triage |
-| Kubernetes CrashLoopBackOff Triage | Draft | `kubectl` status checks, pod events, logs, configuration comparison, fix-forward, recovery verification | Expected after Killercoda sync: https://killercoda.com/josuecross/scenario/kubernetes-crashloopbackoff-triage |
+| Kubernetes CrashLoopBackOff Triage | Live | `kubectl` status checks, pod events, logs, configuration comparison, fix-forward, recovery verification | https://killercoda.com/josuecross/scenario/kubernetes-crashloopbackoff-triage |
 
-## Current Live Scenario
+## Current Live Scenarios
 
 **SRE On-Call Triage: API Error Rate Alert**
 
 https://killercoda.com/josuecross/scenario/sre-api-error-rate-triage
 
 In this scenario, learners act as the on-call responder for TaskFlow Demo, inspect a running training API, reproduce intermittent 5xx failures, review logs, estimate impact, classify severity, and draft a first stakeholder update.
+
+**Kubernetes CrashLoopBackOff Triage**
+
+https://killercoda.com/josuecross/scenario/kubernetes-crashloopbackoff-triage
+
+In this scenario, learners inspect a CrashLoopBackOffing Kubernetes `api-service`, review events and logs, compare configuration expectations, apply a safe fix-forward, and verify recovery.
 
 ## Planned Scenarios
 

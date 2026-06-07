@@ -22,7 +22,7 @@ For restart loops, the current container may exit quickly. Use `describe` for ev
 echo "$POD"
 kubectl describe pod "$POD" -n taskflow-demo
 kubectl logs "$POD" -n taskflow-demo
-kubectl logs "$POD" -n taskflow-demo --previous || true
+kubectl logs "$POD" -n taskflow-demo --previous 2>/dev/null || echo "No previous logs available yet; use the current logs above."
 </code></pre>
 
 </details>
