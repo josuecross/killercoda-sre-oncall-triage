@@ -240,10 +240,54 @@ fi
 
 score=0
 
+cleaned_content="$(
+  awk '
+    function is_placeholder(line) {
+      return line == "Write one sentence describing the current state." ||
+        line == "Who or what appears affected?" ||
+        line == "What service status, metrics, queue depth, oldest age, or logs support your current view?" ||
+        line == "SEV level:" ||
+        line == "Reasoning:" ||
+        line == "What safe mitigation did you apply?" ||
+        line == "How did you confirm the backlog stabilized or started draining?" ||
+        line == "When should stakeholders expect the next update?" ||
+        line == "What should not be assumed yet?"
+    }
+
+    /^## Status$/ ||
+    /^## Impact$/ ||
+    /^## Current Evidence$/ ||
+    /^## Initial Severity$/ ||
+    /^## Mitigation$/ ||
+    /^## Verification$/ ||
+    /^## Next Update Time$/ ||
+    /^## Unknowns$/ {
+      in_section = 1
+      next
+    }
+
+    /^## / {
+      in_section = 0
+      next
+    }
+
+    /^# / {
+      next
+    }
+
+    in_section {
+      sub(/\r$/, "", $0)
+      if ($0 == "") next
+      if (is_placeholder($0)) next
+      print
+    }
+  ' "$NOTES"
+)"
+
 check_term() {
   local label="$1"
   local pattern="$2"
-  if grep -Eiq "$pattern" "$NOTES"; then
+  if grep -Eiq "$pattern" <<< "$cleaned_content"; then
     echo "OK: mentions $label"
     score=$((score + 1))
   else
@@ -254,13 +298,18 @@ check_term() {
 check_term "worker" "notification-worker|worker"
 check_term "queue/backlog" "queue|backlog"
 check_term "delay/lag" "delayed|delay|lag"
-check_term "metrics or queue depth" "metrics|queue depth|taskflow_queue_depth"
+check_term "metrics, queue depth, or oldest age" "metrics|queue depth|oldest age|oldest message|taskflow_queue_depth"
 check_term "mitigation/scale" "mitigation|mitigate|scale|capacity"
-check_term "verification/recovery" "verified|verification|recovery|draining|stabilized|stable"
+check_term "verification/recovery" "verified|verification|recovery|draining|drain|stabilized|stable"
 
 echo
+if [ -z "$cleaned_content" ]; then
+  echo "No learner-written content found yet. Fill in the notes template, then run this checker again."
+  exit 0
+fi
+
 if [ "$score" -ge 5 ]; then
-  echo "Good first-pass queue triage note. You captured impact, evidence, mitigation, and recovery signals."
+  echo "Good first-pass queue incident note. You captured the component, backlog signal, mitigation, and recovery evidence."
 else
   echo "Keep tightening the note: include component, backlog signal, impact, mitigation, verification, and unknowns."
 fi

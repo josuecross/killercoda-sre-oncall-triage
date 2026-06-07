@@ -14,11 +14,9 @@ This roadmap keeps the public interactive scenarios focused while the paid compa
   - Link: https://killercoda.com/josuecross/scenario/kubernetes-crashloopbackoff-triage
   - Focus: Kubernetes status checks, pod events, logs, configuration comparison, fix-forward, and recovery verification.
 
-## Current Draft Scenario
-
 - **Queue Backlog / Worker Saturation Triage**
-  - Status: Draft
-  - Expected future link: https://killercoda.com/josuecross/scenario/queue-backlog-worker-saturation
+  - Status: Live
+  - Link: https://killercoda.com/josuecross/scenario/queue-backlog-worker-saturation
   - Focus: Worker health, queue depth, oldest message age, backlog trend, mitigation, drain verification, and first stakeholder update.
 
 ## Next Recommended Scenario
