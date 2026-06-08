@@ -11,7 +11,7 @@ The scenarios are clean-room training material. Learners use realistic incident-
 | API Error Rate Alert | Live | Alert triage, `curl`, Docker logs, `grep`, `awk`, severity, first stakeholder update | https://killercoda.com/josuecross/scenario/sre-api-error-rate-triage |
 | Kubernetes CrashLoopBackOff Triage | Live | `kubectl` status checks, pod events, logs, configuration comparison, fix-forward, recovery verification | https://killercoda.com/josuecross/scenario/kubernetes-crashloopbackoff-triage |
 | Queue Backlog / Worker Saturation Triage | Live | Queue metrics, worker logs, backlog trend, mitigation, drain verification, first stakeholder update | https://killercoda.com/josuecross/scenario/queue-backlog-worker-saturation |
-| Deployment Mismatch / Rollback Decision Triage | Draft | Health versus workflow behavior, release/config comparison, rollback decision, recovery verification, first stakeholder update | Expected after Killercoda sync: https://killercoda.com/josuecross/scenario/deployment-mismatch-rollback |
+| Deployment Mismatch / Rollback Decision Triage | Live | Health versus workflow behavior, release/config comparison, rollback decision, recovery verification, first stakeholder update | https://killercoda.com/josuecross/scenario/deployment-mismatch-rollback |
 
 ## Current Live Scenarios
 
@@ -32,6 +32,12 @@ In this scenario, learners inspect a CrashLoopBackOffing Kubernetes `api-service
 https://killercoda.com/josuecross/scenario/queue-backlog-worker-saturation
 
 In this scenario, learners inspect a growing async queue backlog, compare queue depth with worker capacity, apply a safe training mitigation, verify drain, and draft a first update.
+
+**Deployment Mismatch / Rollback Decision Triage**
+
+https://killercoda.com/josuecross/scenario/deployment-mismatch-rollback
+
+In this scenario, learners compare health checks with workflow behavior, inspect release and runtime config, choose a rollback in a training context, verify recovery, and draft a first update.
 
 ## Planned Scenarios
 
